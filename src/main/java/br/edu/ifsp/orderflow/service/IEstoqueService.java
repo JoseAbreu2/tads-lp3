@@ -24,15 +24,15 @@ public interface IEstoqueService {
 
     /**
      * Tenta reservar o estoque de todos os itens do pedido.
+     *
      * @param pedido
      * @return true se conseguiu reservar, false do contrário
      */
     public boolean reservar(Pedido pedido);
 
     /**
-     *Devolve ao estoque os itens de um pedido (ex.: pagamento recusado)
+     * Devolve ao estoque os itens de um pedido (ex.: pagamento recusado)
      * @param pedido
      */
     public void liberar(Pedido pedido);
-
 }

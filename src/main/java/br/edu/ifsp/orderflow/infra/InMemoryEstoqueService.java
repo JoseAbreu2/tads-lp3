@@ -17,21 +17,28 @@ public class InMemoryEstoqueService implements IEstoqueService {
     public void adicionarEstoque(Produto produto, int quantidade) {
         int qtdAtual = this.estoque.getOrDefault(produto.getId(), 0);
         this.estoque.put(produto.getId(), quantidade + qtdAtual);
-
     }
 
     @Override
     public int quantidadeDisponivel(Produto produto) {
+        return this.estoque.getOrDefault(produto.getId(), 0);
+    }
 
-        return this.estoque.getOrDefault(produto.getId(),0);
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     @Override
     public boolean reservar(Pedido pedido) {
 
-        List<ItemPedido> itens = pedido.getItens();
+        List<ItemPedido> listaDeItens = pedido.getItens();
 
-        for (ItemPedido item : itens) {
+        // Conferir se todos os produtos têm estoque
+        for (ItemPedido item : listaDeItens) {
 
             int disponivel = this.quantidadeDisponivel(item.getProduto());
 
@@ -40,11 +47,13 @@ public class InMemoryEstoqueService implements IEstoqueService {
             }
         }
 
-        for (ItemPedido item : itens){
+        this.sleep(50);
+
+        for (ItemPedido item : listaDeItens) {
 
             Produto produto = item.getProduto();
-            String produtoId = produto.getId();
-            int quantidadeAtual = this.estoque.getOrDefault(produtoId,0);
+            String produtoId = produto.getId(); // item.getProduto().getId()
+            int quantidadeAtual = this.estoque.getOrDefault(produtoId, 0);
             this.estoque.put(produtoId, quantidadeAtual - item.getQuantidade());
         }
 
@@ -53,12 +62,18 @@ public class InMemoryEstoqueService implements IEstoqueService {
 
     @Override
     public void liberar(Pedido pedido) {
-        List<ItemPedido> itens = pedido.getItens();
 
-        for (ItemPedido item : itens){
+//        List<ItemPedido> itens = pedido.getItens();
+//
+//        for (ItemPedido item : itens) {
+//
+//            Produto produto = item.getProduto();
+//            int disponivel = this.quantidadeDisponivel(item.getProduto());
+//            this.estoque.put(produto.getId(), disponivel + item.getQuantidade());
+//        }
+
+        for (ItemPedido item : pedido.getItens()) {
             this.adicionarEstoque(item.getProduto(), item.getQuantidade());
         }
-
-
     }
 }
