@@ -2,8 +2,8 @@ package br.edu.ifsp.orderflow.events;
 
 import java.time.Instant;
 
-public record PagamentoRecusado(
+public record PedidoCriado(
     String pedidoId,
-    String motivo,
     Instant ocorridoEm
-) implements IDomainEvent {}
+) implements IDomainEvent {
+}
